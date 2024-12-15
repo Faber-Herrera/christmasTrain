@@ -8,22 +8,23 @@ TrenWebServer::TrenWebServer(TrainController &trenController, SoundLedController
 
 void TrenWebServer::inicializar()
 {
-  server.on("/avanzar", HTTP_GET, [this]()
+  server.on(ENDPOINT_AVANZAR, HTTP_GET, [this]()
             {
         if (rutina.estaEnRutina()) {
             rutina.detenerRutina();
         }
         String velocidadStr = server.arg("velocidad");
-        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : 255;
+        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getVelocidadMaxima();
         
-        // Asegurar que la velocidad esté en el rango correcto
-        velocidad = constrain(velocidad, 0, 255);
+        velocidad = constrain(velocidad,
+                            TrainConfig::getVelocidadMinima(),
+                            TrainConfig::getVelocidadMaxima());
         
         Serial.println("AVANZAR RECIBIDO - Velocidad: " + String(velocidad));
         tren.avanzar(velocidad);
         server.send(200, "text/plain", "Avanzando a velocidad: " + String(velocidad)); });
 
-  server.on("/detener", HTTP_GET, [this]()
+  server.on(ENDPOINT_DETENER, HTTP_GET, [this]()
             {
         if (rutina.estaEnRutina()) {
             rutina.detenerRutina();
@@ -31,67 +32,32 @@ void TrenWebServer::inicializar()
         tren.detener();
         server.send(200, "text/plain", "Detenido"); });
 
-  server.on("/retroceder", HTTP_GET, [this]()
+  server.on(ENDPOINT_RETROCEDER, HTTP_GET, [this]()
             {
         if (rutina.estaEnRutina()) {
             rutina.detenerRutina();
         }
         String velocidadStr = server.arg("velocidad");
-        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : 255;
-        
-        // Asegurar que la velocidad esté en el rango correcto
-        velocidad = constrain(velocidad, 0, 255);
-        
+        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getVelocidadMaxima();
+
+        velocidad = constrain(velocidad,
+                            TrainConfig::getVelocidadMinima(),
+                            TrainConfig::getVelocidadMaxima());
+
         Serial.println("RETROCEDER RECIBIDO - Velocidad: " + String(velocidad));
         tren.retroceder(velocidad);
         server.send(200, "text/plain", "Retrocediendo a velocidad: " + String(velocidad)); });
 
-  server.on("/sonido/activar", HTTP_GET, [this]()
-            {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
-        }
-        Serial.println("SONIDO ACTIVADO");
-        soundLed.activarSonido();
-        server.send(200, "text/plain", "Sonido activado"); });
-
-  server.on("/sonido/desactivar", HTTP_GET, [this]()
-            {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
-        }
-        Serial.println("SONIDO DESACTIVADO");
-        soundLed.desactivarSonido();
-        server.send(200, "text/plain", "Sonido desactivado"); });
-
-  server.on("/led/encender", HTTP_GET, [this]()
-            {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
-        }
-        Serial.println("LED ENCENDIDO");
-        soundLed.encenderLed();
-        server.send(200, "text/plain", "LED encendido"); });
-
-  server.on("/led/apagar", HTTP_GET, [this]()
-            {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
-        }
-        Serial.println("LED APAGADO");
-        soundLed.apagarLed();
-        server.send(200, "text/plain", "LED apagado"); });
-
-  server.on("/rutina/detener", HTTP_GET, [this]()
+  server.on(ENDPOINT_RUTINA_DETENER, HTTP_GET, [this]()
             {
         Serial.println("DETENIENDO RUTINA");
         rutina.detenerRutina();
         server.send(200, "text/plain", "Rutina detenida"); });
 
-  server.on("/rutina/iniciar", HTTP_GET, [this]()
+  server.on(ENDPOINT_RUTINA_INICIAR, HTTP_GET, [this]()
             {
         String tipoRutinaStr = server.arg("tipo");
-        TipoRutina tipoRutina = TipoRutina::RUTINA_DEMO; // valor por defecto
+        TipoRutina tipoRutina = TipoRutina::RUTINA_DEMO;
         
         if (tipoRutinaStr == "demo") {
             tipoRutina = TipoRutina::RUTINA_DEMO;
@@ -103,6 +69,46 @@ void TrenWebServer::inicializar()
         rutina.resetearDetencionManual();
         rutina.iniciarRutina(tipoRutina);
         server.send(200, "text/plain", "Rutina " + tipoRutinaStr + " iniciada"); });
+
+  server.on(ENDPOINT_VELOCIDAD_MIN, HTTP_POST, [this]()
+            {
+        String velocidadStr = server.arg("valor");
+        if (velocidadStr.length() == 0) {
+            server.send(400, "text/plain", "Falta el parámetro 'valor'");
+            return;
+        }
+        
+        uint8_t velocidad = velocidadStr.toInt();
+        if (TrainConfig::setVelocidadMinima(velocidad)) {
+            server.send(200, "text/plain", "Velocidad mínima establecida: " + String(velocidad));
+        } else {
+            server.send(400, "text/plain", "Valor inválido para velocidad mínima");
+        } });
+
+  server.on(ENDPOINT_VELOCIDAD_MAX, HTTP_POST, [this]()
+            {
+        String velocidadStr = server.arg("valor");
+        if (velocidadStr.length() == 0) {
+            server.send(400, "text/plain", "Falta el parámetro 'valor'");
+            return;
+        }
+        
+        uint8_t velocidad = velocidadStr.toInt();
+        if (TrainConfig::setVelocidadMaxima(velocidad)) {
+            server.send(200, "text/plain", "Velocidad máxima establecida: " + String(velocidad));
+        } else {
+            server.send(400, "text/plain", "Valor inválido para velocidad máxima");
+        } });
+
+  server.on(ENDPOINT_CONFIGURACION_VELOCIDAD, HTTP_GET, [this]()
+            {
+        uint8_t velocidadMinima = TrainConfig::getVelocidadMinima();
+        uint8_t velocidadMaxima = TrainConfig::getVelocidadMaxima();
+        uint8_t velocidadActual = TrainConfig::getVelocidadActual();
+        String response = "{\"velocidadMinima\": " + String(velocidadMinima) + 
+                         ", \"velocidadMaxima\": " + String(velocidadMaxima) + 
+                         ", \"velocidadActual\": " + String(velocidadActual) + "}";
+        server.send(200, "application/json", response); });
 
   server.onNotFound([this]()
                     {
