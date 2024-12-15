@@ -10,6 +10,13 @@ bool WiFiManager::inicializar()
   Serial.println("Iniciando conexión WiFi...");
 
   WiFi.mode(WIFI_STA);
+
+  // Configurar IP estática
+  IPAddress ip(192, 168, 0, 254);     // Cambia a la IP deseada
+  IPAddress gateway(192, 168, 0, 1);  // Cambia a la puerta de enlace deseada
+  IPAddress subnet(255, 255, 255, 0); // Cambia a la máscara de subred deseada
+  WiFi.config(ip, gateway, subnet);
+
   WiFi.begin(ssid, password);
 
   // Esperar a que se conecte

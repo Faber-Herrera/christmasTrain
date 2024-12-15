@@ -90,10 +90,19 @@ void TrenWebServer::inicializar()
 
   server.on("/rutina/iniciar", HTTP_GET, [this]()
             {
-        Serial.println("INICIANDO RUTINA");
+        String tipoRutinaStr = server.arg("tipo");
+        TipoRutina tipoRutina = TipoRutina::RUTINA_DEMO; // valor por defecto
+        
+        if (tipoRutinaStr == "demo") {
+            tipoRutina = TipoRutina::RUTINA_DEMO;
+        } else if (tipoRutinaStr == "avanzar") {
+            tipoRutina = TipoRutina::RUTINA_AVANZAR;
+        }
+        
+        Serial.println("INICIANDO RUTINA: " + tipoRutinaStr);
         rutina.resetearDetencionManual();
-        rutina.iniciarRutina();
-        server.send(200, "text/plain", "Rutina iniciada"); });
+        rutina.iniciarRutina(tipoRutina);
+        server.send(200, "text/plain", "Rutina " + tipoRutinaStr + " iniciada"); });
 
   server.onNotFound([this]()
                     {

@@ -5,6 +5,12 @@
 #include "SoundLedController.h"
 #include <Arduino.h>
 
+enum class TipoRutina
+{
+  RUTINA_DEMO,
+  RUTINA_AVANZAR,
+};
+
 class TrainRoutine
 {
 private:
@@ -17,17 +23,28 @@ private:
   bool enRutina = false;
   int pasoActual = 0;
   bool detencionManual = true;
+  TipoRutina rutinaActual = TipoRutina::RUTINA_DEMO;
+  unsigned long tiempoLedInicio;
+  bool ledEncendido;
 
   void siguientePaso();
   void procesarPasoActual();
+  void actualizarRutinaBasica(unsigned long tiempoTranscurrido);
 
 public:
   TrainRoutine(TrainController &trenController, SoundLedController &soundLedController);
-  void iniciarRutina();
+  void iniciarRutina(TipoRutina tipo);
+  void iniciarRutinaDemo();
+  void iniciarRutinaAvanzar();
   void actualizar();
   bool estaEnRutina() const { return enRutina; }
   void detenerRutina();
   void resetearDetencionManual() { detencionManual = false; }
+  void actualizarRutinaAvanzar(unsigned long tiempoTranscurrido);
+  void setRutina(TipoRutina tipo)
+  {
+    rutinaActual = tipo;
+  }
 };
 
 #endif
