@@ -20,9 +20,27 @@ void TrainController::inicializar()
   detener();
 }
 
+int TrainController::ajustarVelocidad(int velocidad)
+{
+  // Primero aplicamos los límites absolutos
+  velocidad = abs(constrain(velocidad, 0, 255));
+
+  // Luego aplicamos los límites configurados
+  if (velocidad > 0)
+  {
+    velocidad = constrain(velocidad,
+                          TrainConfig::getVelocidadMinima(),
+                          TrainConfig::getVelocidadMaxima());
+  }
+
+  TrainConfig::setVelocidadActual(velocidad);
+
+  return velocidad;
+}
+
 void TrainController::avanzar(int velocidadFinal)
 {
-  velocidadFinal = abs(constrain(velocidadFinal, 0, 255));
+  velocidadFinal = ajustarVelocidad(velocidadFinal);
 
   // Si está retrocediendo o en fade de retroceso, primero hacer fade hasta detenerse
   if ((enMovimiento || enFade) && digitalRead(PIN_MOTOR_B) == HIGH)
@@ -49,7 +67,7 @@ void TrainController::avanzar(int velocidadFinal)
 
 void TrainController::retroceder(int velocidadFinal)
 {
-  velocidadFinal = abs(constrain(velocidadFinal, 0, 255));
+  velocidadFinal = ajustarVelocidad(velocidadFinal);
 
   // Si está avanzando o en fade de avance, primero hacer fade hasta detenerse
   if ((enMovimiento || enFade) && digitalRead(PIN_MOTOR_A) == HIGH)
@@ -105,8 +123,8 @@ void TrainController::actualizarFade()
   if (tiempoTranscurrido >= duracionFadeMs)
   {
     // Fade completado
-    ledcWrite(0, velocidadObjetivo);
-    velocidadActual = velocidadObjetivo;
+    velocidadActual = ajustarVelocidad(velocidadObjetivo);
+    ledcWrite(0, velocidadActual);
     enFade = false;
 
     // Si estábamos esperando cambio de dirección y llegamos a velocidad 0
@@ -138,7 +156,7 @@ void TrainController::actualizarFade()
   // Calcular velocidad intermedia
   int velocidadTemp = map(tiempoTranscurrido, 0, duracionFadeMs,
                           velocidadInicial, velocidadObjetivo);
-  velocidadTemp = abs(constrain(velocidadTemp, 0, 255));
+  velocidadTemp = ajustarVelocidad(velocidadTemp);
   ledcWrite(0, velocidadTemp);
   velocidadActual = velocidadTemp;
 }

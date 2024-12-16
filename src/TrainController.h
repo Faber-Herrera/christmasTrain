@@ -1,6 +1,8 @@
 #ifndef TRAIN_CONTROLLER_H
 #define TRAIN_CONTROLLER_H
 
+#include "config/TrainConfig.h"
+
 class TrainController
 {
 private:
@@ -25,6 +27,9 @@ private:
   int velocidadPendiente;
   static const int DIRECCION_ADELANTE = 1;
   static const int DIRECCION_ATRAS = 2;
+
+  // Método privado para validar y ajustar velocidad
+  int ajustarVelocidad(int velocidad);
 
 public:
   TrainController();
