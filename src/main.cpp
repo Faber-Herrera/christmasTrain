@@ -13,6 +13,7 @@ TrenWebServer servidor(tren, soundLed, rutina); // Actualizado con los tres cont
 void setup()
 {
   Serial.begin(115200);
+  TrainConfig::begin();
 
   // Inicializar controladores
   tren.inicializar();
