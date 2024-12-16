@@ -110,6 +110,42 @@ void TrenWebServer::inicializar()
                          ", \"velocidadActual\": " + String(velocidadActual) + "}";
         server.send(200, "application/json", response); });
 
+  server.on(ENDPOINT_SONIDO_ACTIVAR, HTTP_GET, [this]()
+            {
+        if (rutina.estaEnRutina()) {
+            rutina.detenerRutina();
+        }
+        Serial.println("SONIDO ACTIVADO");
+        soundLed.activarSonido();
+        server.send(200, "text/plain", "Sonido activado"); });
+
+  server.on(ENDPOINT_SONIDO_DESACTIVAR, HTTP_GET, [this]()
+            {
+        if (rutina.estaEnRutina()) {
+            rutina.detenerRutina();
+        }
+        Serial.println("SONIDO DESACTIVADO");
+        soundLed.desactivarSonido();
+        server.send(200, "text/plain", "Sonido desactivado"); });
+
+  server.on(ENDPOINT_LED_ENCENDER, HTTP_GET, [this]()
+            {
+        if (rutina.estaEnRutina()) {
+            rutina.detenerRutina();
+        }
+        Serial.println("LED ENCENDIDO");
+        soundLed.encenderLed();
+        server.send(200, "text/plain", "LED encendido"); });
+
+  server.on(ENDPOINT_LED_APAGAR, HTTP_GET, [this]()
+            {
+        if (rutina.estaEnRutina()) {
+            rutina.detenerRutina();
+        }
+        Serial.println("LED APAGADO");
+        soundLed.apagarLed();
+        server.send(200, "text/plain", "LED apagado"); });
+
   server.onNotFound([this]()
                     {
         Serial.println("Ruta no encontrada");

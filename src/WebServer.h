@@ -25,6 +25,10 @@ private:
   static constexpr const char *ENDPOINT_RUTINA_INICIAR = "/rutina/iniciar";                   // GET - param: tipo
   static constexpr const char *ENDPOINT_RUTINA_DETENER = "/rutina/detener";                   // GET
   static constexpr const char *ENDPOINT_CONFIGURACION_VELOCIDAD = "/configuracion/velocidad"; // GET
+  static constexpr const char *ENDPOINT_SONIDO_ACTIVAR = "/sonido/activar";                   // GET
+  static constexpr const char *ENDPOINT_SONIDO_DESACTIVAR = "/sonido/desactivar";             // GET
+  static constexpr const char *ENDPOINT_LED_ENCENDER = "/led/encender";                       // GET
+  static constexpr const char *ENDPOINT_LED_APAGAR = "/led/apagar";                           // GET
 
 public:
   TrenWebServer(TrainController &trenController, SoundLedController &soundLedController, TrainRoutine &trainRoutine);
