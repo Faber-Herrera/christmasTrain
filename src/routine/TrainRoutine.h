@@ -14,7 +14,7 @@ enum class TypeRoutine
 class TrainRoutine
 {
 private:
-  TrainController &tren;
+  TrainController &train;
   SoundLedController &soundLed;
 
   bool isLedOn;

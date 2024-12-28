@@ -1,7 +1,7 @@
 #include "TrainRoutine.h"
 
 TrainRoutine::TrainRoutine(TrainController &trenController, SoundLedController &soundLedController)
-    : tren(trenController), soundLed(soundLedController)
+    : train(trenController), soundLed(soundLedController)
 {
 }
 
@@ -28,7 +28,7 @@ void TrainRoutine::startDemoRoutine()
   isRoutine = true;
   timeStart = millis();
 
-  Serial.println("Iniciando rutina demo del tren");
+  Serial.println("Iniciando routine demo del train");
   Serial.println("Paso 0: Espera inicial de 2 segundos");
 
   // Paso 1: encender led y sonido
@@ -47,7 +47,7 @@ void TrainRoutine::stopRoutine()
 {
   manualStop = true;
   isRoutine = false;
-  tren.stop();
+  train.stop();
   soundLed.turnOffLed();
   soundLed.deactivateSound();
   Serial.println("Rutina detenida manualmente");
@@ -94,7 +94,7 @@ void TrainRoutine::updateBasicRoutine(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // 0-2000ms: espera inicial
     {
       Serial.println("Paso 1: Avanzando por 5 segundos (con fade de 3s)");
-      tren.forward(TrainConfig::getCurrentSpeed());
+      train.forward(TrainConfig::getCurrentSpeed());
       currentStep++;
     }
     break;
@@ -103,7 +103,7 @@ void TrainRoutine::updateBasicRoutine(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 10000) // 2000-10000ms: 5s avance + 3s fade
     {
       Serial.println("Paso 2: Retrocediendo por 5 segundos (con fade de 3s + 3s)");
-      tren.backward(TrainConfig::getCurrentSpeed()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
+      train.backward(TrainConfig::getCurrentSpeed()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
       currentStep++;
     }
     break;
@@ -112,7 +112,7 @@ void TrainRoutine::updateBasicRoutine(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 21000) // 10000-21000ms: 5s retroceso + 6s fades totales
     {
       Serial.println("Paso 3: Deteniendo con fade (3s)");
-      tren.stop();
+      train.stop();
       currentStep++;
     }
     break;
@@ -149,7 +149,7 @@ void TrainRoutine::updateBasicRoutine(unsigned long tiempoTranscurrido)
       }
       else
       {
-        Serial.println("Ciclo de rutina completado");
+        Serial.println("Ciclo de routine completado");
         soundLed.turnOffLed();
         soundLed.deactivateSound();
         isRoutine = false;
@@ -188,7 +188,7 @@ void TrainRoutine::updateAdvanceRoutine(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // Espera inicial de 2 segundos
     {
       Serial.println("Paso 1: Avanzando");
-      tren.forward(TrainConfig::getCurrentSpeed());
+      train.forward(TrainConfig::getCurrentSpeed());
       currentStep++;
     }
     break;
@@ -197,7 +197,7 @@ void TrainRoutine::updateAdvanceRoutine(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 15000) // 2000+3000+10000: 02s espera + 03s fade + 10s de avance
     {
       Serial.println("Paso 2: Deteniendo");
-      tren.stop();
+      train.stop();
       currentStep++;
     }
     break;

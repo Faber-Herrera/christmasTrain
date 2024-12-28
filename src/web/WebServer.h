@@ -7,33 +7,33 @@
 #include "routine/TrainRoutine.h"
 #include "config/TrainConfig.h"
 
-class TrenWebServer
+class TrainWebServer
 {
 private:
   ESP32WebServer server;
-  TrainController &tren;
+  TrainController &train;
   SoundLedController &soundLed;
-  TrainRoutine &rutina;
-  const int puerto = 80;
+  TrainRoutine &routine;
+  const int port = 80;
 
   // Documentación de endpoints
-  static constexpr const char *ENDPOINT_VELOCIDAD_MIN = "/velocidad/minima";                  // POST - param: valor
-  static constexpr const char *ENDPOINT_VELOCIDAD_MAX = "/velocidad/maxima";                  // POST - param: valor
-  static constexpr const char *ENDPOINT_AVANZAR = "/avanzar";                                 // GET - param: velocidad
-  static constexpr const char *ENDPOINT_RETROCEDER = "/retroceder";                           // GET - param: velocidad
-  static constexpr const char *ENDPOINT_DETENER = "/detener";                                 // GET
-  static constexpr const char *ENDPOINT_RUTINA_INICIAR = "/rutina/iniciar";                   // GET - param: tipo
-  static constexpr const char *ENDPOINT_RUTINA_DETENER = "/rutina/detener";                   // GET
-  static constexpr const char *ENDPOINT_CONFIGURACION_VELOCIDAD = "/configuracion/velocidad"; // GET
-  static constexpr const char *ENDPOINT_SONIDO_ACTIVAR = "/sonido/activar";                   // GET
-  static constexpr const char *ENDPOINT_SONIDO_DESACTIVAR = "/sonido/desactivar";             // GET
-  static constexpr const char *ENDPOINT_LED_ENCENDER = "/led/encender";                       // GET
-  static constexpr const char *ENDPOINT_LED_APAGAR = "/led/apagar";                           // GET
+  static constexpr const char *ENDPOINT_SPEED_MIN = "/velocidad/minima";           // POST - param: valor
+  static constexpr const char *ENDPOINT_SPEED_MAX = "/velocidad/maxima";           // POST - param: valor
+  static constexpr const char *ENDPOINT_ADVANCE = "/avanzar";                      // GET - param: velocidad
+  static constexpr const char *ENDPOINT_BACKWARD = "/retroceder";                  // GET - param: velocidad
+  static constexpr const char *ENDPOINT_STOP = "/detener";                         // GET
+  static constexpr const char *ENDPOINT_ROUTINE_START = "/routine/iniciar";        // GET - param: tipo
+  static constexpr const char *ENDPOINT_ROUTINE_STOP = "/routine/detener";         // GET
+  static constexpr const char *ENDPOINT_CONFIG_SPEED = "/configuracion/velocidad"; // GET
+  static constexpr const char *ENDPOINT_SOUND_ON = "/sonido/activar";              // GET
+  static constexpr const char *ENDPOINT_SOUND_OFF = "/sonido/desactivar";          // GET
+  static constexpr const char *ENDPOINT_LED_ON = "/led/encender";                  // GET
+  static constexpr const char *ENDPOINT_LED_OFF = "/led/apagar";                   // GET
 
 public:
-  TrenWebServer(TrainController &trenController, SoundLedController &soundLedController, TrainRoutine &trainRoutine);
-  void inicializar();
-  void manejarClientes();
+  TrainWebServer(TrainController &trenController, SoundLedController &soundLedController, TrainRoutine &trainRoutine);
+  void initialize();
+  void handleClients();
 };
 
 #endif

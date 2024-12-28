@@ -7,8 +7,8 @@
 WiFiManager wifi;
 TrainController train;
 SoundLedController soundLed;
-TrainRoutine rutina(train, soundLed);
-TrenWebServer servidor(train, soundLed, rutina); // Actualizado con los tres controladores
+TrainRoutine routine(train, soundLed);
+TrainWebServer servidor(train, soundLed, routine); // Actualizado con los tres controladores
 
 void setup()
 {
@@ -27,7 +27,7 @@ void setup()
   }
 
   // Inicializar servidor web
-  servidor.inicializar();
+  servidor.initialize();
 
   Serial.print("Servidor web disponible en: http://");
   Serial.println(wifi.getIP());
@@ -45,7 +45,7 @@ void loop()
   }
 
   train.updateFade();
-  servidor.manejarClientes(); // Manejar peticiones web
-  rutina.update();
+  servidor.handleClients(); // Manejar peticiones web
+  routine.update();
   delay(10);
 }
