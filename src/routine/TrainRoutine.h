@@ -1,8 +1,8 @@
 #ifndef TRAIN_ROUTINE_H
 #define TRAIN_ROUTINE_H
 
-#include "TrainController.h"
-#include "SoundLedController.h"
+#include "train/TrainController.h"
+#include "sound-led/SoundLedController.h"
 #include <Arduino.h>
 
 enum class TipoRutina

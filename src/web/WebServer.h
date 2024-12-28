@@ -2,9 +2,9 @@
 #define WEB_SERVER_H
 
 #include <ESP32WebServer.h>
-#include "TrainController.h"
-#include "SoundLedController.h"
-#include "TrainRoutine.h"
+#include "train/TrainController.h"
+#include "sound-led/SoundLedController.h"
+#include "routine/TrainRoutine.h"
 #include "config/TrainConfig.h"
 
 class TrenWebServer

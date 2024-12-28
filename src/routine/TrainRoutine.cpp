@@ -32,8 +32,8 @@ void TrainRoutine::iniciarRutinaDemo()
   Serial.println("Paso 0: Espera inicial de 2 segundos");
 
   // Paso 1: encender led y sonido
-  soundLed.encenderLed();
-  soundLed.activarSonido();
+  soundLed.turnOnLed();
+  soundLed.activateSound();
 }
 
 void TrainRoutine::iniciarRutinaAvanzar()
@@ -48,8 +48,8 @@ void TrainRoutine::detenerRutina()
   detencionManual = true;
   enRutina = false;
   tren.detener();
-  soundLed.apagarLed();
-  soundLed.desactivarSonido();
+  soundLed.turnOffLed();
+  soundLed.deactivateSound();
   Serial.println("Rutina detenida manualmente");
 }
 
@@ -122,7 +122,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     {
       Serial.println("Paso 4: Iniciando secuencia de parpadeo");
       tiempoUltimoBlink = millis();
-      soundLed.apagarLed();
+      soundLed.turnOffLed();
       pasoActual++;
     }
     break;
@@ -137,21 +137,21 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
         {
           Serial.print("LED encendido - Parpadeo ");
           Serial.println((contadorBlinks / 2) + 1);
-          soundLed.encenderLed();
+          soundLed.turnOnLed();
         }
         else
         {
           Serial.print("LED apagado - Parpadeo ");
           Serial.println((contadorBlinks / 2) + 1);
-          soundLed.apagarLed();
+          soundLed.turnOffLed();
         }
         contadorBlinks++;
       }
       else
       {
         Serial.println("Ciclo de rutina completado");
-        soundLed.apagarLed();
-        soundLed.desactivarSonido();
+        soundLed.turnOffLed();
+        soundLed.deactivateSound();
         enRutina = false;
         // No establecemos detencionManual aquí para permitir el reinicio
       }
@@ -169,11 +169,11 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     ledEncendido = !ledEncendido; // Invertimos el estado
     if (ledEncendido)
     {
-      soundLed.encenderLed();
+      soundLed.turnOnLed();
     }
     else
     {
-      soundLed.apagarLed();
+      soundLed.turnOffLed();
     }
   }
 
@@ -206,8 +206,8 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 20000) // 15000-20000ms: 15s de avance + 3s de fade + 2s de espera
     {
       Serial.println("Rutina de avance completada");
-      soundLed.apagarLed();
-      soundLed.desactivarSonido();
+      soundLed.turnOffLed();
+      soundLed.deactivateSound();
       enRutina = false;
     }
     break;

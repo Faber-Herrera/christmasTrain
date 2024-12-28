@@ -1,8 +1,8 @@
 #include "wifi/WiFiManager.h"
-#include "TrainController.h"
-#include "WebServer.h"
-#include "SoundLedController.h"
-#include "TrainRoutine.h"
+#include "train/TrainController.h"
+#include "web/WebServer.h"
+#include "sound-led/SoundLedController.h"
+#include "routine/TrainRoutine.h"
 
 WiFiManager wifi;
 TrainController tren;
@@ -17,7 +17,7 @@ void setup()
 
   // Inicializar controladores
   tren.inicializar();
-  soundLed.inicializar();
+  soundLed.initialize();
 
   // Inicializar WiFi
   if (!wifi.initialize())

@@ -4,20 +4,20 @@
 class SoundLedController
 {
 private:
-  static const int PIN_SONIDO = 5;
+  static const int PIN_SOUND = 5;
   static const int PIN_LED = 4;
 
 public:
   SoundLedController();
-  void inicializar();
+  void initialize();
 
   // Control de sonido
-  void activarSonido();
-  void desactivarSonido();
+  void activateSound();
+  void deactivateSound();
 
   // Control de LED
-  void encenderLed();
-  void apagarLed();
+  void turnOnLed();
+  void turnOffLed();
 };
 
 #endif

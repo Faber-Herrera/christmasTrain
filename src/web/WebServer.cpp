@@ -116,7 +116,7 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         Serial.println("SONIDO ACTIVADO");
-        soundLed.activarSonido();
+        soundLed.activateSound();
         server.send(200, "text/plain", "Sonido activado"); });
 
   server.on(ENDPOINT_SONIDO_DESACTIVAR, HTTP_GET, [this]()
@@ -125,7 +125,7 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         Serial.println("SONIDO DESACTIVADO");
-        soundLed.desactivarSonido();
+        soundLed.deactivateSound();
         server.send(200, "text/plain", "Sonido desactivado"); });
 
   server.on(ENDPOINT_LED_ENCENDER, HTTP_GET, [this]()
@@ -134,7 +134,7 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         Serial.println("LED ENCENDIDO");
-        soundLed.encenderLed();
+        soundLed.turnOnLed();
         server.send(200, "text/plain", "LED encendido"); });
 
   server.on(ENDPOINT_LED_APAGAR, HTTP_GET, [this]()
@@ -143,7 +143,7 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         Serial.println("LED APAGADO");
-        soundLed.apagarLed();
+        soundLed.turnOffLed();
         server.send(200, "text/plain", "LED apagado"); });
 
   server.onNotFound([this]()
