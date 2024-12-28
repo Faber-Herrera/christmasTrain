@@ -5,7 +5,7 @@ WiFiManager::WiFiManager()
 {
 }
 
-bool WiFiManager::inicializar()
+bool WiFiManager::initialize()
 {
   Serial.println("Iniciando conexión WiFi...");
 
@@ -20,17 +20,17 @@ bool WiFiManager::inicializar()
   WiFi.begin(ssid, password);
 
   // Esperar a que se conecte
-  int intento = 0;
-  while (WiFi.status() != WL_CONNECTED && intento < maxIntentos)
+  int attempt = 0;
+  while (WiFi.status() != WL_CONNECTED && attempt < maxAttempts)
   {
     delay(500);
     Serial.print(".");
-    intento++;
+    attempt++;
   }
 
   if (WiFi.status() == WL_CONNECTED)
   {
-    conectado = true;
+    connected = true;
     Serial.println("\nConectado al WiFi!");
     Serial.print("Dirección IP: ");
     Serial.println(WiFi.localIP());
@@ -38,50 +38,50 @@ bool WiFiManager::inicializar()
   }
   else
   {
-    conectado = false;
+    connected = false;
     Serial.println("\nFallo en la conexión WiFi!");
     return false;
   }
 }
 
-bool WiFiManager::reconectar()
+bool WiFiManager::reconnect()
 {
-  if (estaConectado())
+  if (isConnected())
     return true;
 
-  intentosReconexion++;
-  if (intentosReconexion > maxIntentos)
+  reconnectionAttempts++;
+  if (reconnectionAttempts > maxAttempts)
   {
     Serial.println("Demasiados intentos de reconexión. Reiniciando...");
     ESP.restart();
   }
 
-  return inicializar();
+  return initialize();
 }
 
-void WiFiManager::desconectar()
+void WiFiManager::disconnect()
 {
   WiFi.disconnect();
-  conectado = false;
+  connected = false;
   Serial.println("WiFi desconectado");
 }
 
-bool WiFiManager::estaConectado() const
+bool WiFiManager::isConnected() const
 {
   return WiFi.status() == WL_CONNECTED;
 }
 
-String WiFiManager::obtenerIP() const
+String WiFiManager::getIP() const
 {
   return WiFi.localIP().toString();
 }
 
-String WiFiManager::obtenerSSID() const
+String WiFiManager::getSSID() const
 {
   return String(ssid);
 }
 
-int WiFiManager::obtenerRSSI() const
+int WiFiManager::getRSSI() const
 {
   return WiFi.RSSI();
 }

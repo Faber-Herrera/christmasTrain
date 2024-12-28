@@ -11,23 +11,23 @@ private:
   const char *password = "Qwerty123**";
 
   // Variables de estado
-  bool conectado = false;
-  int intentosReconexion = 0;
-  const int maxIntentos = 20;
+  bool connected = false;
+  int reconnectionAttempts = 0;
+  const int maxAttempts = 20;
 
 public:
   WiFiManager();
 
   // Métodos principales
-  bool inicializar();
-  bool reconectar();
-  void desconectar();
+  bool initialize();
+  bool reconnect();
+  void disconnect();
 
   // Métodos de estado
-  bool estaConectado() const;
-  String obtenerIP() const;
-  String obtenerSSID() const;
-  int obtenerRSSI() const; // Fuerza de la señal
+  bool isConnected() const;
+  String getIP() const;
+  String getSSID() const;
+  int getRSSI() const; // Fuerza de la señal
 };
 
 #endif

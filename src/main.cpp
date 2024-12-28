@@ -1,4 +1,4 @@
-#include "WiFiManager.h"
+#include "wifi/WiFiManager.h"
 #include "TrainController.h"
 #include "WebServer.h"
 #include "SoundLedController.h"
@@ -20,7 +20,7 @@ void setup()
   soundLed.inicializar();
 
   // Inicializar WiFi
-  if (!wifi.inicializar())
+  if (!wifi.initialize())
   {
     Serial.println("Error al iniciar WiFi");
     return;
@@ -30,16 +30,16 @@ void setup()
   servidor.inicializar();
 
   Serial.print("Servidor web disponible en: http://");
-  Serial.println(wifi.obtenerIP());
+  Serial.println(wifi.getIP());
 }
 
 void loop()
 {
   // Verificar conexión WiFi
-  if (!wifi.estaConectado())
+  if (!wifi.isConnected())
   {
     Serial.println("Reconectando WiFi...");
-    wifi.reconectar();
+    wifi.reconnect();
     delay(1000);
     return;
   }
