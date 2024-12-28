@@ -94,7 +94,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // 0-2000ms: espera inicial
     {
       Serial.println("Paso 1: Avanzando por 5 segundos (con fade de 3s)");
-      tren.forward(TrainConfig::getVelocidadActual());
+      tren.forward(TrainConfig::getCurrentSpeed());
       pasoActual++;
     }
     break;
@@ -103,7 +103,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 10000) // 2000-10000ms: 5s avance + 3s fade
     {
       Serial.println("Paso 2: Retrocediendo por 5 segundos (con fade de 3s + 3s)");
-      tren.backward(TrainConfig::getVelocidadActual()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
+      tren.backward(TrainConfig::getCurrentSpeed()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
       pasoActual++;
     }
     break;
@@ -188,7 +188,7 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // Espera inicial de 2 segundos
     {
       Serial.println("Paso 1: Avanzando");
-      tren.forward(TrainConfig::getVelocidadActual());
+      tren.forward(TrainConfig::getCurrentSpeed());
       pasoActual++;
     }
     break;

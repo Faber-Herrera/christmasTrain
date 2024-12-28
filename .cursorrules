@@ -24,6 +24,6 @@ la arquitectura debe ser la siguiente:
 │ │ ├── WiFiManager.cpp
 
 Para generar el mensaje del commit utiliza las siguientes reglas:
-- El comentario no puede ser mayor a 100 caracteres
+- El comentario no puede ser mayor a 100 caracteres nunca
 - El comentario debe ser en inglés
 - El comentario debe ser claro y específico

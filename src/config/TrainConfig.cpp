@@ -1,52 +1,52 @@
 #include "TrainConfig.h"
 
 Preferences TrainConfig::preferences;
-uint8_t TrainConfig::velocidadMinima = 0;
-uint8_t TrainConfig::velocidadMaxima = 255;
-uint8_t TrainConfig::velocidadActual = 0;
+uint8_t TrainConfig::minSpeed = 0;
+uint8_t TrainConfig::maxSpeed = 255;
+uint8_t TrainConfig::currentSpeed = 0;
 
 // Definición de constantes para almacenamiento
 const char *TrainConfig::NAMESPACE = "train";
-const char *TrainConfig::KEY_VEL_MIN = "vel_min";
-const char *TrainConfig::KEY_VEL_MAX = "vel_max";
+const char *TrainConfig::KEY_MIN_SPEED = "min_speed";
+const char *TrainConfig::KEY_MAX_SPEED = "max_speed";
 
 void TrainConfig::begin()
 {
   preferences.begin(NAMESPACE, false);
 
   // Cargar valores almacenados o usar valores por defecto
-  velocidadMinima = preferences.getUChar(KEY_VEL_MIN, 0);
-  velocidadMaxima = preferences.getUChar(KEY_VEL_MAX, 255);
+  minSpeed = preferences.getUChar(KEY_MIN_SPEED, 0);
+  maxSpeed = preferences.getUChar(KEY_MAX_SPEED, 255);
 }
 
-bool TrainConfig::setVelocidadMinima(uint8_t velocidad)
+bool TrainConfig::setMinSpeed(uint8_t velocidad)
 {
-  if (velocidad > velocidadMaxima || velocidad < VELOCIDAD_MIN_ABSOLUTA)
+  if (velocidad > maxSpeed || velocidad < MIN_SPEED_ABSOLUTE)
   {
     return false;
   }
-  velocidadMinima = velocidad;
-  preferences.putUChar(KEY_VEL_MIN, velocidad);
+  minSpeed = velocidad;
+  preferences.putUChar(KEY_MIN_SPEED, velocidad);
   return true;
 }
 
-bool TrainConfig::setVelocidadMaxima(uint8_t velocidad)
+bool TrainConfig::setMaxSpeed(uint8_t velocidad)
 {
-  if (velocidad < velocidadMinima || velocidad > VELOCIDAD_MAX_ABSOLUTA)
+  if (velocidad < minSpeed || velocidad > MAX_SPEED_ABSOLUTE)
   {
     return false;
   }
-  velocidadMaxima = velocidad;
-  preferences.putUChar(KEY_VEL_MAX, velocidad);
+  maxSpeed = velocidad;
+  preferences.putUChar(KEY_MAX_SPEED, velocidad);
   return true;
 }
 
 bool TrainConfig::setCurrentSpeed(uint8_t velocidad)
 {
-  if (velocidad < velocidadMinima || velocidad > velocidadMaxima)
+  if (velocidad < minSpeed || velocidad > maxSpeed)
   {
     return false;
   }
-  velocidadActual = velocidad;
+  currentSpeed = velocidad;
   return true;
 }

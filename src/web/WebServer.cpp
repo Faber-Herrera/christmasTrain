@@ -14,11 +14,11 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         String velocidadStr = server.arg("velocidad");
-        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getVelocidadMaxima();
+        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getMaxSpeed();
         
         velocidad = constrain(velocidad,
-                            TrainConfig::getVelocidadMinima(),
-                            TrainConfig::getVelocidadMaxima());
+                            TrainConfig::getMinSpeed(),
+                            TrainConfig::getMaxSpeed());
         
         Serial.println("AVANZAR RECIBIDO - Velocidad: " + String(velocidad));
         tren.forward(velocidad);
@@ -38,11 +38,11 @@ void TrenWebServer::inicializar()
             rutina.detenerRutina();
         }
         String velocidadStr = server.arg("velocidad");
-        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getVelocidadMaxima();
+        int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getMaxSpeed();
 
         velocidad = constrain(velocidad,
-                            TrainConfig::getVelocidadMinima(),
-                            TrainConfig::getVelocidadMaxima());
+                            TrainConfig::getMinSpeed(),
+                            TrainConfig::getMaxSpeed());
 
         Serial.println("RETROCEDER RECIBIDO - Velocidad: " + String(velocidad));
         tren.backward(velocidad);
@@ -79,7 +79,7 @@ void TrenWebServer::inicializar()
         }
         
         uint8_t velocidad = velocidadStr.toInt();
-        if (TrainConfig::setVelocidadMinima(velocidad)) {
+        if (TrainConfig::setMinSpeed(velocidad)) {
             server.send(200, "text/plain", "Velocidad mínima establecida: " + String(velocidad));
         } else {
             server.send(400, "text/plain", "Valor inválido para velocidad mínima");
@@ -94,7 +94,7 @@ void TrenWebServer::inicializar()
         }
         
         uint8_t velocidad = velocidadStr.toInt();
-        if (TrainConfig::setVelocidadMaxima(velocidad)) {
+        if (TrainConfig::setMaxSpeed(velocidad)) {
             server.send(200, "text/plain", "Velocidad máxima establecida: " + String(velocidad));
         } else {
             server.send(400, "text/plain", "Valor inválido para velocidad máxima");
@@ -102,12 +102,12 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_CONFIGURACION_VELOCIDAD, HTTP_GET, [this]()
             {
-        uint8_t velocidadMinima = TrainConfig::getVelocidadMinima();
-        uint8_t velocidadMaxima = TrainConfig::getVelocidadMaxima();
-        uint8_t velocidadActual = TrainConfig::getVelocidadActual();
-        String response = "{\"velocidadMinima\": " + String(velocidadMinima) + 
-                         ", \"velocidadMaxima\": " + String(velocidadMaxima) + 
-                         ", \"velocidadActual\": " + String(velocidadActual) + "}";
+        uint8_t minSpeed = TrainConfig::getMinSpeed();
+        uint8_t maxSpeed = TrainConfig::getMaxSpeed();
+        uint8_t currentSpeed = TrainConfig::getCurrentSpeed();
+        String response = "{\"minSpeed\": " + String(minSpeed) + 
+                         ", \"maxSpeed\": " + String(maxSpeed) + 
+                         ", \"currentSpeed\": " + String(currentSpeed) + "}";
         server.send(200, "application/json", response); });
 
   server.on(ENDPOINT_SONIDO_ACTIVAR, HTTP_GET, [this]()

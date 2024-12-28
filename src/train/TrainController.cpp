@@ -29,8 +29,8 @@ int TrainController::setSpeed(int speed)
   if (speed > 0)
   {
     speed = constrain(speed,
-                      TrainConfig::getVelocidadMinima(),
-                      TrainConfig::getVelocidadMaxima());
+                      TrainConfig::getMinSpeed(),
+                      TrainConfig::getMaxSpeed());
   }
 
   TrainConfig::setCurrentSpeed(speed);
