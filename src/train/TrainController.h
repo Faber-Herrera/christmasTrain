@@ -12,38 +12,37 @@ private:
   const int PIN_VELOCIDAD = 25; // Pin PWM para velocidad
 
   // Variables de estado
-  int velocidadActual = 0;
-  bool enMovimiento = false;
+  int currentSpeed = 0;
+  bool isOnMovement = false;
 
   // Variables para el control del fade
-  unsigned long tiempoInicioFade = 0;
-  int velocidadInicial = 0;
-  int velocidadObjetivo = 0;
-  bool enFade = false;
-  const int duracionFadeMs = 3000;
-
-  bool esperandoCambioDireccion = false;
-  int direccionPendiente;
-  int velocidadPendiente;
-  static const int DIRECCION_ADELANTE = 1;
-  static const int DIRECCION_ATRAS = 2;
+  unsigned long timeStartFade = 0;
+  int initialSpeed = 0;
+  int targetSpeed = 0;
+  bool isFade = false;
+  const int fadeDurarionMs = 3000;
+  bool isChangeDirection = false;
+  int pendingDirection;
+  int pendingSpeed;
+  static const int DIRECTION_FORWARD = 1;
+  static const int DIRECTION_BACKWARD = 2;
 
   // Método privado para validar y ajustar velocidad
-  int ajustarVelocidad(int velocidad);
+  int setSpeed(int speed);
 
 public:
   TrainController();
 
   // Métodos básicos de control
-  void inicializar();
-  void avanzar(int velocidad);    // velocidad: 0-255
-  void retroceder(int velocidad); // velocidad: 0-255
-  void detener();
-  void actualizarFade(); // Nuevo método para manejar el fade
+  void initialize();
+  void forward(int speed);  // speed: 0-255
+  void backward(int speed); // speed: 0-255
+  void stop();
+  void updateFade(); // Nuevo método para manejar el fade
 
   // Métodos para obtener estado
-  bool estaEnMovimiento() const { return enMovimiento; }
-  int obtenerVelocidad() const { return velocidadActual; }
+  bool isMotion() const { return isOnMovement; }
+  int getSpeed() const { return currentSpeed; }
 };
 
 #endif

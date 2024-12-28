@@ -5,10 +5,10 @@
 #include "routine/TrainRoutine.h"
 
 WiFiManager wifi;
-TrainController tren;
+TrainController train;
 SoundLedController soundLed;
-TrainRoutine rutina(tren, soundLed);
-TrenWebServer servidor(tren, soundLed, rutina); // Actualizado con los tres controladores
+TrainRoutine rutina(train, soundLed);
+TrenWebServer servidor(train, soundLed, rutina); // Actualizado con los tres controladores
 
 void setup()
 {
@@ -16,7 +16,7 @@ void setup()
   TrainConfig::begin();
 
   // Inicializar controladores
-  tren.inicializar();
+  train.initialize();
   soundLed.initialize();
 
   // Inicializar WiFi
@@ -44,7 +44,7 @@ void loop()
     return;
   }
 
-  tren.actualizarFade();
+  train.updateFade();
   servidor.manejarClientes(); // Manejar peticiones web
   rutina.actualizar();
   delay(10);

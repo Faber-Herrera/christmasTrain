@@ -16,26 +16,3 @@ El tren debe tener rutinas en donde el tren integre una o varias de las funciona
 Todo el código debe ser modular, en ingles y con comentarios en ingles.
 
 Debe tener buenas practicas de programación, como evitar el uso de delay(), usar millis() para el tiempo, etc.
-
-la arquitectura debe ser la siguiente:
-
-├── src/
-│ ├── main.cpp
-│ ├── config/
-│ │ ├── TrainConfig.h
-│ │ ├── TrainConfig.cpp
-│ ├── routine/
-│ │ ├── TrainRoutine.h
-│ │ ├── TrainRoutine.cpp
-│ ├── sound-led/
-│ │ ├── SoundLedController.h
-│ │ ├── SoundLedController.cpp
-│ ├── train/
-│ │ ├── TrainController.h
-│ │ ├── TrainController.cpp
-│ ├── web/
-│ │ ├── WebServer.h
-│ │ ├── WebServer.cpp
-│ ├── wifi/
-│ │ ├── WiFiManager.h
-│ │ ├── WiFiManager.cpp

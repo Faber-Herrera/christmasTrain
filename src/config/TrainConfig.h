@@ -25,7 +25,7 @@ public:
   static void begin();
   static bool setVelocidadMinima(uint8_t velocidad);
   static bool setVelocidadMaxima(uint8_t velocidad);
-  static bool setVelocidadActual(uint8_t velocidad);
+  static bool setCurrentSpeed(uint8_t velocidad);
   static uint8_t getVelocidadMinima() { return velocidadMinima; }
   static uint8_t getVelocidadMaxima() { return velocidadMaxima; }
   static uint8_t getVelocidadActual() { return velocidadActual; }

@@ -5,7 +5,7 @@ TrainController::TrainController()
 {
 }
 
-void TrainController::inicializar()
+void TrainController::initialize()
 {
   // Configurar pines como salidas
   pinMode(PIN_MOTOR_A, OUTPUT);
@@ -17,121 +17,121 @@ void TrainController::inicializar()
   ledcAttachPin(PIN_VELOCIDAD, 0);
 
   // Iniciar detenido
-  detener();
+  stop();
 }
 
-int TrainController::ajustarVelocidad(int velocidad)
+int TrainController::setSpeed(int speed)
 {
   // Primero aplicamos los límites absolutos
-  velocidad = abs(constrain(velocidad, 0, 255));
+  speed = abs(constrain(speed, 0, 255));
 
   // Luego aplicamos los límites configurados
-  if (velocidad > 0)
+  if (speed > 0)
   {
-    velocidad = constrain(velocidad,
-                          TrainConfig::getVelocidadMinima(),
-                          TrainConfig::getVelocidadMaxima());
+    speed = constrain(speed,
+                      TrainConfig::getVelocidadMinima(),
+                      TrainConfig::getVelocidadMaxima());
   }
 
-  TrainConfig::setVelocidadActual(velocidad);
+  TrainConfig::setCurrentSpeed(speed);
 
-  return velocidad;
+  return speed;
 }
 
-void TrainController::avanzar(int velocidadFinal)
+void TrainController::forward(int finalSpeed)
 {
-  velocidadFinal = ajustarVelocidad(velocidadFinal);
+  finalSpeed = setSpeed(finalSpeed);
 
   // Si está retrocediendo o en fade de retroceso, primero hacer fade hasta detenerse
-  if ((enMovimiento || enFade) && digitalRead(PIN_MOTOR_B) == HIGH)
+  if ((isOnMovement || isFade) && digitalRead(PIN_MOTOR_B) == HIGH)
   {
-    velocidadObjetivo = 0;
-    velocidadInicial = abs(velocidadActual);
-    tiempoInicioFade = millis();
-    enFade = true;
-    esperandoCambioDireccion = true;
-    direccionPendiente = DIRECCION_ADELANTE;
-    velocidadPendiente = velocidadFinal;
+    targetSpeed = 0;
+    initialSpeed = abs(currentSpeed);
+    timeStartFade = millis();
+    isFade = true;
+    isChangeDirection = true;
+    pendingDirection = DIRECTION_FORWARD;
+    pendingSpeed = finalSpeed;
     return;
   }
 
   // Comportamiento normal si no estaba retrocediendo
-  velocidadInicial = abs(velocidadActual);
-  velocidadObjetivo = velocidadFinal;
+  initialSpeed = abs(currentSpeed);
+  targetSpeed = finalSpeed;
   digitalWrite(PIN_MOTOR_A, HIGH);
   digitalWrite(PIN_MOTOR_B, LOW);
-  tiempoInicioFade = millis();
-  enFade = true;
-  enMovimiento = true;
+  timeStartFade = millis();
+  isFade = true;
+  isOnMovement = true;
 }
 
-void TrainController::retroceder(int velocidadFinal)
+void TrainController::backward(int finalSpeed)
 {
-  velocidadFinal = ajustarVelocidad(velocidadFinal);
+  finalSpeed = setSpeed(finalSpeed);
 
   // Si está avanzando o en fade de avance, primero hacer fade hasta detenerse
-  if ((enMovimiento || enFade) && digitalRead(PIN_MOTOR_A) == HIGH)
+  if ((isOnMovement || isFade) && digitalRead(PIN_MOTOR_A) == HIGH)
   {
-    velocidadObjetivo = 0;
-    velocidadInicial = abs(velocidadActual);
-    tiempoInicioFade = millis();
-    enFade = true;
-    esperandoCambioDireccion = true;
-    direccionPendiente = DIRECCION_ATRAS;
-    velocidadPendiente = velocidadFinal;
+    targetSpeed = 0;
+    initialSpeed = abs(currentSpeed);
+    timeStartFade = millis();
+    isFade = true;
+    isChangeDirection = true;
+    pendingDirection = DIRECTION_BACKWARD;
+    pendingSpeed = finalSpeed;
     return;
   }
 
   // Comportamiento normal si no estaba avanzando
-  velocidadInicial = abs(velocidadActual);
-  velocidadObjetivo = velocidadFinal;
+  initialSpeed = abs(currentSpeed);
+  targetSpeed = finalSpeed;
   digitalWrite(PIN_MOTOR_A, LOW);
   digitalWrite(PIN_MOTOR_B, HIGH);
-  tiempoInicioFade = millis();
-  enFade = true;
-  enMovimiento = true;
+  timeStartFade = millis();
+  isFade = true;
+  isOnMovement = true;
 }
 
-void TrainController::detener()
+void TrainController::stop()
 {
   // Si ya está detenido, no hacer nada
-  if (!enMovimiento && velocidadActual == 0)
+  if (!isOnMovement && currentSpeed == 0)
     return;
 
   // Solo cancelar cambio de dirección si no estamos en medio de uno
-  if (!enFade)
+  if (!isFade)
   {
-    esperandoCambioDireccion = false;
+    isChangeDirection = false;
   }
 
   // Iniciar fade hasta velocidad 0
-  velocidadInicial = abs(velocidadActual);
-  velocidadObjetivo = 0;
-  tiempoInicioFade = millis();
-  enFade = true;
-  enMovimiento = false; // Marcamos como no en movimiento inmediatamente
+  initialSpeed = abs(currentSpeed);
+  targetSpeed = 0;
+  timeStartFade = millis();
+  isFade = true;
+  isOnMovement = false; // Marcamos como no en movimiento inmediatamente
 }
 
-void TrainController::actualizarFade()
+void TrainController::updateFade()
 {
-  if (!enFade)
+  if (!isFade)
     return;
 
   unsigned long tiempoActual = millis();
-  unsigned long tiempoTranscurrido = tiempoActual - tiempoInicioFade;
+  unsigned long tiempoTranscurrido = tiempoActual - timeStartFade;
 
-  if (tiempoTranscurrido >= duracionFadeMs)
+  if (tiempoTranscurrido >= fadeDurarionMs)
   {
     // Fade completado
-    velocidadActual = ajustarVelocidad(velocidadObjetivo);
-    ledcWrite(0, velocidadActual);
-    enFade = false;
+    currentSpeed = setSpeed(targetSpeed);
+    ledcWrite(0, currentSpeed);
+    isFade = false;
 
     // Si estábamos esperando cambio de dirección y llegamos a velocidad 0
-    if (esperandoCambioDireccion && velocidadActual == 0)
+    if (isChangeDirection && currentSpeed == 0)
     {
       // Configurar nueva dirección
-      if (direccionPendiente == DIRECCION_ADELANTE)
+      if (pendingDirection == DIRECTION_FORWARD)
       {
         digitalWrite(PIN_MOTOR_A, HIGH);
         digitalWrite(PIN_MOTOR_B, LOW);
@@ -143,20 +143,20 @@ void TrainController::actualizarFade()
       }
 
       // Iniciar fade hacia la velocidad pendiente
-      velocidadInicial = 0;
-      velocidadObjetivo = velocidadPendiente;
-      tiempoInicioFade = millis();
-      enFade = true;
-      esperandoCambioDireccion = false;
-      enMovimiento = true;
+      initialSpeed = 0;
+      targetSpeed = pendingSpeed;
+      timeStartFade = millis();
+      isFade = true;
+      isChangeDirection = false;
+      isOnMovement = true;
     }
     return;
   }
 
   // Calcular velocidad intermedia
-  int velocidadTemp = map(tiempoTranscurrido, 0, duracionFadeMs,
-                          velocidadInicial, velocidadObjetivo);
-  velocidadTemp = ajustarVelocidad(velocidadTemp);
+  int velocidadTemp = map(tiempoTranscurrido, 0, fadeDurarionMs,
+                          initialSpeed, targetSpeed);
+  velocidadTemp = setSpeed(velocidadTemp);
   ledcWrite(0, velocidadTemp);
-  velocidadActual = velocidadTemp;
+  currentSpeed = velocidadTemp;
 }

@@ -47,7 +47,7 @@ void TrainRoutine::detenerRutina()
 {
   detencionManual = true;
   enRutina = false;
-  tren.detener();
+  tren.stop();
   soundLed.turnOffLed();
   soundLed.deactivateSound();
   Serial.println("Rutina detenida manualmente");
@@ -94,7 +94,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // 0-2000ms: espera inicial
     {
       Serial.println("Paso 1: Avanzando por 5 segundos (con fade de 3s)");
-      tren.avanzar(TrainConfig::getVelocidadActual());
+      tren.forward(TrainConfig::getVelocidadActual());
       pasoActual++;
     }
     break;
@@ -103,7 +103,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 10000) // 2000-10000ms: 5s avance + 3s fade
     {
       Serial.println("Paso 2: Retrocediendo por 5 segundos (con fade de 3s + 3s)");
-      tren.retroceder(TrainConfig::getVelocidadActual()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
+      tren.backward(TrainConfig::getVelocidadActual()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
       pasoActual++;
     }
     break;
@@ -112,7 +112,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 21000) // 10000-21000ms: 5s retroceso + 6s fades totales
     {
       Serial.println("Paso 3: Deteniendo con fade (3s)");
-      tren.detener();
+      tren.stop();
       pasoActual++;
     }
     break;
@@ -188,7 +188,7 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 2000) // Espera inicial de 2 segundos
     {
       Serial.println("Paso 1: Avanzando");
-      tren.avanzar(TrainConfig::getVelocidadActual());
+      tren.forward(TrainConfig::getVelocidadActual());
       pasoActual++;
     }
     break;
@@ -197,7 +197,7 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 15000) // 2000+3000+10000: 02s espera + 03s fade + 10s de avance
     {
       Serial.println("Paso 2: Deteniendo");
-      tren.detener();
+      tren.stop();
       pasoActual++;
     }
     break;

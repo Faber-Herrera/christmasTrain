@@ -1,1 +1,29 @@
 use the instructions.md in root directory to get context
+
+la arquitectura debe ser la siguiente:
+
+├── src/
+│ ├── main.cpp
+│ ├── config/
+│ │ ├── TrainConfig.h
+│ │ ├── TrainConfig.cpp
+│ ├── routine/
+│ │ ├── TrainRoutine.h
+│ │ ├── TrainRoutine.cpp
+│ ├── sound-led/
+│ │ ├── SoundLedController.h
+│ │ ├── SoundLedController.cpp
+│ ├── train/
+│ │ ├── TrainController.h
+│ │ ├── TrainController.cpp
+│ ├── web/
+│ │ ├── WebServer.h
+│ │ ├── WebServer.cpp
+│ ├── wifi/
+│ │ ├── WiFiManager.h
+│ │ ├── WiFiManager.cpp
+
+Para generar el mensaje del commit utiliza las siguientes reglas:
+- El comentario no puede ser mayor a 100 caracteres
+- El comentario debe ser en inglés
+- El comentario debe ser claro y específico

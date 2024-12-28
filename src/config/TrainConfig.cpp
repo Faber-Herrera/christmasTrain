@@ -41,7 +41,7 @@ bool TrainConfig::setVelocidadMaxima(uint8_t velocidad)
   return true;
 }
 
-bool TrainConfig::setVelocidadActual(uint8_t velocidad)
+bool TrainConfig::setCurrentSpeed(uint8_t velocidad)
 {
   if (velocidad < velocidadMinima || velocidad > velocidadMaxima)
   {

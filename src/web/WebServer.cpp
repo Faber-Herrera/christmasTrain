@@ -21,7 +21,7 @@ void TrenWebServer::inicializar()
                             TrainConfig::getVelocidadMaxima());
         
         Serial.println("AVANZAR RECIBIDO - Velocidad: " + String(velocidad));
-        tren.avanzar(velocidad);
+        tren.forward(velocidad);
         server.send(200, "text/plain", "Avanzando a velocidad: " + String(velocidad)); });
 
   server.on(ENDPOINT_DETENER, HTTP_GET, [this]()
@@ -29,7 +29,7 @@ void TrenWebServer::inicializar()
         if (rutina.estaEnRutina()) {
             rutina.detenerRutina();
         }
-        tren.detener();
+        tren.stop();
         server.send(200, "text/plain", "Detenido"); });
 
   server.on(ENDPOINT_RETROCEDER, HTTP_GET, [this]()
@@ -45,7 +45,7 @@ void TrenWebServer::inicializar()
                             TrainConfig::getVelocidadMaxima());
 
         Serial.println("RETROCEDER RECIBIDO - Velocidad: " + String(velocidad));
-        tren.retroceder(velocidad);
+        tren.backward(velocidad);
         server.send(200, "text/plain", "Retrocediendo a velocidad: " + String(velocidad)); });
 
   server.on(ENDPOINT_RUTINA_DETENER, HTTP_GET, [this]()
