@@ -10,8 +10,8 @@ void TrenWebServer::inicializar()
 {
   server.on(ENDPOINT_AVANZAR, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         String velocidadStr = server.arg("velocidad");
         int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getMaxSpeed();
@@ -26,16 +26,16 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_DETENER, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         tren.stop();
         server.send(200, "text/plain", "Detenido"); });
 
   server.on(ENDPOINT_RETROCEDER, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         String velocidadStr = server.arg("velocidad");
         int velocidad = velocidadStr.length() > 0 ? velocidadStr.toInt() : TrainConfig::getMaxSpeed();
@@ -51,23 +51,23 @@ void TrenWebServer::inicializar()
   server.on(ENDPOINT_RUTINA_DETENER, HTTP_GET, [this]()
             {
         Serial.println("DETENIENDO RUTINA");
-        rutina.detenerRutina();
+        rutina.stopRoutine();
         server.send(200, "text/plain", "Rutina detenida"); });
 
   server.on(ENDPOINT_RUTINA_INICIAR, HTTP_GET, [this]()
             {
         String tipoRutinaStr = server.arg("tipo");
-        TipoRutina tipoRutina = TipoRutina::RUTINA_DEMO;
+        TypeRoutine tipoRutina = TypeRoutine::ROUTINE_DEMO;
         
         if (tipoRutinaStr == "demo") {
-            tipoRutina = TipoRutina::RUTINA_DEMO;
+            tipoRutina = TypeRoutine::ROUTINE_DEMO;
         } else if (tipoRutinaStr == "avanzar") {
-            tipoRutina = TipoRutina::RUTINA_AVANZAR;
+            tipoRutina = TypeRoutine::ROUTINE_AVANZAR;
         }
         
         Serial.println("INICIANDO RUTINA: " + tipoRutinaStr);
-        rutina.resetearDetencionManual();
-        rutina.iniciarRutina(tipoRutina);
+        rutina.resetManualStop();
+        rutina.startRoutine(tipoRutina);
         server.send(200, "text/plain", "Rutina " + tipoRutinaStr + " iniciada"); });
 
   server.on(ENDPOINT_VELOCIDAD_MIN, HTTP_POST, [this]()
@@ -112,8 +112,8 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_SONIDO_ACTIVAR, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         Serial.println("SONIDO ACTIVADO");
         soundLed.activateSound();
@@ -121,8 +121,8 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_SONIDO_DESACTIVAR, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         Serial.println("SONIDO DESACTIVADO");
         soundLed.deactivateSound();
@@ -130,8 +130,8 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_LED_ENCENDER, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         Serial.println("LED ENCENDIDO");
         soundLed.turnOnLed();
@@ -139,8 +139,8 @@ void TrenWebServer::inicializar()
 
   server.on(ENDPOINT_LED_APAGAR, HTTP_GET, [this]()
             {
-        if (rutina.estaEnRutina()) {
-            rutina.detenerRutina();
+        if (rutina.isInRoutine()) {
+            rutina.stopRoutine();
         }
         Serial.println("LED APAGADO");
         soundLed.turnOffLed();

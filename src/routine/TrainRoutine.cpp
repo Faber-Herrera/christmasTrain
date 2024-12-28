@@ -5,97 +5,97 @@ TrainRoutine::TrainRoutine(TrainController &trenController, SoundLedController &
 {
 }
 
-void TrainRoutine::iniciarRutina(TipoRutina tipo)
+void TrainRoutine::startRoutine(TypeRoutine type)
 {
-  rutinaActual = tipo;
-  switch (tipo)
+  routineActual = type;
+  switch (type)
   {
-  case TipoRutina::RUTINA_DEMO:
-    iniciarRutinaDemo();
+  case TypeRoutine::ROUTINE_DEMO:
+    startDemoRoutine();
     break;
-  case TipoRutina::RUTINA_AVANZAR:
-    iniciarRutinaAvanzar();
+  case TypeRoutine::ROUTINE_AVANZAR:
+    startAdvanceRoutine();
     break;
   default:
     break;
   }
 }
 
-void TrainRoutine::iniciarRutinaDemo()
+void TrainRoutine::startDemoRoutine()
 {
-  pasoActual = 0;
-  enRutina = true;
-  tiempoInicio = millis();
-  contadorBlinks = 0;
+  counterBlinks = 0;
+  currentStep = 0;
+  isRoutine = true;
+  timeStart = millis();
 
   Serial.println("Iniciando rutina demo del tren");
   Serial.println("Paso 0: Espera inicial de 2 segundos");
 
   // Paso 1: encender led y sonido
-  soundLed.turnOnLed();
   soundLed.activateSound();
+  soundLed.turnOnLed();
 }
 
-void TrainRoutine::iniciarRutinaAvanzar()
+void TrainRoutine::startAdvanceRoutine()
 {
-  iniciarRutinaDemo();
-  tiempoLedInicio = millis();
-  ledEncendido = true;
+  startDemoRoutine();
+  timeLedStart = millis();
+  isLedOn = true;
 }
 
-void TrainRoutine::detenerRutina()
+void TrainRoutine::stopRoutine()
 {
-  detencionManual = true;
-  enRutina = false;
+  manualStop = true;
+  isRoutine = false;
   tren.stop();
   soundLed.turnOffLed();
   soundLed.deactivateSound();
   Serial.println("Rutina detenida manualmente");
 }
 
-void TrainRoutine::actualizar()
+void TrainRoutine::update()
 {
-  if (!enRutina)
+  if (!isRoutine)
   {
-    if (!detencionManual)
+    if (!manualStop)
     {
-      iniciarRutina(rutinaActual);
+      startRoutine(routineActual);
     }
     return;
   }
 
   unsigned long tiempoActual = millis();
-  unsigned long tiempoTranscurrido = tiempoActual - tiempoInicio;
+  unsigned long tiempoTranscurrido = tiempoActual - timeStart;
 
-  switch (rutinaActual)
+  switch (routineActual)
   {
-  case TipoRutina::RUTINA_DEMO:
-    actualizarRutinaBasica(tiempoTranscurrido);
+  case TypeRoutine::ROUTINE_DEMO:
+    updateBasicRoutine(tiempoTranscurrido);
     break;
 
-  case TipoRutina::RUTINA_AVANZAR:
-    actualizarRutinaAvanzar(tiempoTranscurrido);
+  case TypeRoutine::ROUTINE_AVANZAR:
+    updateAdvanceRoutine(tiempoTranscurrido);
     break;
   }
 }
 
-void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
+void TrainRoutine::updateBasicRoutine(unsigned long tiempoTranscurrido)
 {
 
   // Agregamos mensajes de debug para ver los tiempos
   Serial.print("Tiempo transcurrido: ");
   Serial.print(tiempoTranscurrido);
   Serial.print("ms - Paso actual: ");
-  Serial.println(pasoActual);
+  Serial.println(currentStep);
 
-  switch (pasoActual)
+  switch (currentStep)
   {
   case 0:
     if (tiempoTranscurrido >= 2000) // 0-2000ms: espera inicial
     {
       Serial.println("Paso 1: Avanzando por 5 segundos (con fade de 3s)");
       tren.forward(TrainConfig::getCurrentSpeed());
-      pasoActual++;
+      currentStep++;
     }
     break;
 
@@ -104,7 +104,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     {
       Serial.println("Paso 2: Retrocediendo por 5 segundos (con fade de 3s + 3s)");
       tren.backward(TrainConfig::getCurrentSpeed()); // Esto implica 3s fade a 0 + 3s fade a velocidad final
-      pasoActual++;
+      currentStep++;
     }
     break;
 
@@ -113,7 +113,7 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     {
       Serial.println("Paso 3: Deteniendo con fade (3s)");
       tren.stop();
-      pasoActual++;
+      currentStep++;
     }
     break;
 
@@ -121,53 +121,53 @@ void TrainRoutine::actualizarRutinaBasica(unsigned long tiempoTranscurrido)
     if (tiempoTranscurrido >= 24000) // 21000-24000ms: 3s fade de detención
     {
       Serial.println("Paso 4: Iniciando secuencia de parpadeo");
-      tiempoUltimoBlink = millis();
+      timeLastBlink = millis();
       soundLed.turnOffLed();
-      pasoActual++;
+      currentStep++;
     }
     break;
 
   case 4:
     // Para el parpadeo sí necesitamos un control de tiempo independiente
-    if (tiempoTranscurrido - (24000 + (contadorBlinks * 1000)) >= 1000)
+    if (tiempoTranscurrido - (24000 + (counterBlinks * 1000)) >= 1000)
     {
-      if (contadorBlinks < 6)
+      if (counterBlinks < 6)
       {
-        if (contadorBlinks % 2 == 0)
+        if (counterBlinks % 2 == 0)
         {
           Serial.print("LED encendido - Parpadeo ");
-          Serial.println((contadorBlinks / 2) + 1);
+          Serial.println((counterBlinks / 2) + 1);
           soundLed.turnOnLed();
         }
         else
         {
           Serial.print("LED apagado - Parpadeo ");
-          Serial.println((contadorBlinks / 2) + 1);
+          Serial.println((counterBlinks / 2) + 1);
           soundLed.turnOffLed();
         }
-        contadorBlinks++;
+        counterBlinks++;
       }
       else
       {
         Serial.println("Ciclo de rutina completado");
         soundLed.turnOffLed();
         soundLed.deactivateSound();
-        enRutina = false;
-        // No establecemos detencionManual aquí para permitir el reinicio
+        isRoutine = false;
+        // No establecemos manualStop aquí para permitir el reinicio
       }
     }
     break;
   }
 }
 
-void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
+void TrainRoutine::updateAdvanceRoutine(unsigned long tiempoTranscurrido)
 {
   // Control del parpadeo continuo
-  if (millis() - tiempoLedInicio >= 500)
+  if (millis() - timeLedStart >= 500)
   {
-    tiempoLedInicio = millis();   // Reiniciamos el contador
-    ledEncendido = !ledEncendido; // Invertimos el estado
-    if (ledEncendido)
+    timeLedStart = millis(); // Reiniciamos el contador
+    isLedOn = !isLedOn;      // Invertimos el estado
+    if (isLedOn)
     {
       soundLed.turnOnLed();
     }
@@ -180,16 +180,16 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
   Serial.print("Tiempo transcurrido: ");
   Serial.print(tiempoTranscurrido);
   Serial.print("ms - Paso actual: ");
-  Serial.println(pasoActual);
+  Serial.println(currentStep);
 
-  switch (pasoActual)
+  switch (currentStep)
   {
   case 0:
     if (tiempoTranscurrido >= 2000) // Espera inicial de 2 segundos
     {
       Serial.println("Paso 1: Avanzando");
       tren.forward(TrainConfig::getCurrentSpeed());
-      pasoActual++;
+      currentStep++;
     }
     break;
 
@@ -198,7 +198,7 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
     {
       Serial.println("Paso 2: Deteniendo");
       tren.stop();
-      pasoActual++;
+      currentStep++;
     }
     break;
 
@@ -208,7 +208,7 @@ void TrainRoutine::actualizarRutinaAvanzar(unsigned long tiempoTranscurrido)
       Serial.println("Rutina de avance completada");
       soundLed.turnOffLed();
       soundLed.deactivateSound();
-      enRutina = false;
+      isRoutine = false;
     }
     break;
   }

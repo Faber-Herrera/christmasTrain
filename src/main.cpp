@@ -46,6 +46,6 @@ void loop()
 
   train.updateFade();
   servidor.manejarClientes(); // Manejar peticiones web
-  rutina.actualizar();
+  rutina.update();
   delay(10);
 }

@@ -27,3 +27,6 @@ Para generar el mensaje del commit utiliza las siguientes reglas:
 - El comentario no puede ser mayor a 100 caracteres nunca
 - El comentario debe ser en inglés
 - El comentario debe ser claro y específico
+
+Para los nombres de booleanos de las clases, utiliza siempre el prefijo "is"
+Para los valores actuales de las variables, utiliza siempre el prefijo "current"

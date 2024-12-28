@@ -5,10 +5,10 @@
 #include "sound-led/SoundLedController.h"
 #include <Arduino.h>
 
-enum class TipoRutina
+enum class TypeRoutine
 {
-  RUTINA_DEMO,
-  RUTINA_AVANZAR,
+  ROUTINE_DEMO,
+  ROUTINE_AVANZAR,
 };
 
 class TrainRoutine
@@ -17,33 +17,33 @@ private:
   TrainController &tren;
   SoundLedController &soundLed;
 
-  unsigned long tiempoInicio = 0;
-  unsigned long tiempoUltimoBlink = 0;
-  int contadorBlinks = 0;
-  bool enRutina = false;
-  int pasoActual = 0;
-  bool detencionManual = true;
-  TipoRutina rutinaActual = TipoRutina::RUTINA_DEMO;
-  unsigned long tiempoLedInicio;
-  bool ledEncendido;
+  bool isLedOn;
+  bool isRoutine = false;
+  bool manualStop = true;
+  int counterBlinks = 0;
+  int currentStep = 0;
+  TypeRoutine routineActual = TypeRoutine::ROUTINE_DEMO;
+  unsigned long timeLastBlink = 0;
+  unsigned long timeLedStart;
+  unsigned long timeStart = 0;
 
-  void siguientePaso();
-  void procesarPasoActual();
-  void actualizarRutinaBasica(unsigned long tiempoTranscurrido);
+  void nextStep();
+  void processCurrentStep();
+  void updateBasicRoutine(unsigned long timeElapsed);
 
 public:
   TrainRoutine(TrainController &trenController, SoundLedController &soundLedController);
-  void iniciarRutina(TipoRutina tipo);
-  void iniciarRutinaDemo();
-  void iniciarRutinaAvanzar();
-  void actualizar();
-  bool estaEnRutina() const { return enRutina; }
-  void detenerRutina();
-  void resetearDetencionManual() { detencionManual = false; }
-  void actualizarRutinaAvanzar(unsigned long tiempoTranscurrido);
-  void setRutina(TipoRutina tipo)
+  void startRoutine(TypeRoutine type);
+  void startDemoRoutine();
+  void startAdvanceRoutine();
+  void update();
+  bool isInRoutine() const { return isRoutine; }
+  void stopRoutine();
+  void resetManualStop() { manualStop = false; }
+  void updateAdvanceRoutine(unsigned long timeElapsed);
+  void setRoutine(TypeRoutine type)
   {
-    rutinaActual = tipo;
+    routineActual = type;
   }
 };
 
